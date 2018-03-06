@@ -120,11 +120,14 @@ func makeTrackEffPlotters(filename string, pTMin, pTMax, fracCut, etaLimit float
 
 				for _, sourceID := range eDep.Source {
 					simHit, ok := event.GetEntry(sourceID).(*eic.SimHit)
-					if !ok {
-						continue
+					if ok {
+						partCandID[simHit.Particle]++
 					}
 
-					partCandID[simHit.Particle]++
+					_, ok = event.GetEntry(sourceID).(*eic.Particle)
+					if ok {
+						partCandID[sourceID]++
+					}
 				}
 			}
 
