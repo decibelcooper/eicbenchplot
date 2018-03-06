@@ -7,10 +7,14 @@ import (
 	"gonum.org/v1/plot"
 )
 
-type PreciseTicks struct{}
+type PreciseTicks struct {
+	NSuggestedTicks int
+}
 
-func (PreciseTicks) Ticks(min, max float64) []plot.Tick {
-	const suggestedTicks = 4
+func (t PreciseTicks) Ticks(min, max float64) []plot.Tick {
+	if t.NSuggestedTicks == 0 {
+		t.NSuggestedTicks = 4
+	}
 
 	if max <= min {
 		panic("illegal range")
@@ -18,12 +22,12 @@ func (PreciseTicks) Ticks(min, max float64) []plot.Tick {
 
 	tens := math.Pow10(int(math.Floor(math.Log10(max - min))))
 	n := (max - min) / tens
-	for n < suggestedTicks-1 {
+	for n < float64(t.NSuggestedTicks)-1 {
 		tens /= 10
 		n = (max - min) / tens
 	}
 
-	majorMult := int(n / (suggestedTicks - 1))
+	majorMult := int(n / float64(t.NSuggestedTicks-1))
 	switch majorMult {
 	case 7:
 		majorMult = 6
