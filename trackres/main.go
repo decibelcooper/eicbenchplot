@@ -11,7 +11,7 @@ import (
 	"github.com/decibelcooper/proio/go-proio/model/eic"
 	"go-hep.org/x/hep/hbook"
 	"gonum.org/v1/plot"
-	"gonum.org/v1/plot/palette/brewer"
+	"gonum.org/v1/plot/palette/moreland"
 	"gonum.org/v1/plot/plotter"
 	"gonum.org/v1/plot/vg"
 
@@ -118,11 +118,15 @@ func main() {
 
 	reader.Close()
 
-	pal, _ := brewer.GetPalette(brewer.TypeAny, "RdYlBu", 11)
-	heatMap := plotter.NewHeatMap(resGrid, pal)
+	colorMap := moreland.BlackBody()
+	colorMap.SetMin(0)
+	colorMap.SetMax(0.05)
+	heatMap := plotter.NewHeatMap(resGrid, colorMap.Palette(1000))
 	heatMap.Min = 0
 	heatMap.Max = 0.05
-	p.Add(heatMap)
+	//p.Add(heatMap)
+	colorBar := &plotter.ColorBar{ColorMap: colorMap}
+	p.Add(colorBar)
 
 	p.Save(6*vg.Inch, 4*vg.Inch, *output)
 }
