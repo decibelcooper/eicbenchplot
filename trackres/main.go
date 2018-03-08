@@ -118,17 +118,25 @@ func main() {
 
 	reader.Close()
 
-	colorMap := moreland.BlackBody()
+	colorMap := moreland.ExtendedBlackBody()
 	colorMap.SetMin(0)
-	colorMap.SetMax(0.05)
+	colorMap.SetMax(0.025)
 	heatMap := plotter.NewHeatMap(resGrid, colorMap.Palette(1000))
 	heatMap.Min = 0
-	heatMap.Max = 0.05
-	//p.Add(heatMap)
-	colorBar := &plotter.ColorBar{ColorMap: colorMap}
-	p.Add(colorBar)
+	heatMap.Max = 0.025
+	p.Add(heatMap)
 
 	p.Save(6*vg.Inch, 4*vg.Inch, *output)
+
+	p, _ = plot.New()
+
+	colorBar := &plotter.ColorBar{ColorMap: colorMap}
+	colorBar.Vertical = true
+	p.Add(colorBar)
+	p.HideX()
+	p.Y.Padding = 0
+
+	p.Save(50, 400, "scale.png")
 }
 
 type ResGrid struct {
