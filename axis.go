@@ -7,6 +7,20 @@ import (
 	"gonum.org/v1/plot"
 )
 
+type LogScale struct{}
+
+func (LogScale) Normalize(min, max, x float64) float64 {
+	logMin := log10(min)
+	return (log10(x) - logMin) / (log10(max) - logMin)
+}
+
+func log10(x float64) float64 {
+	if x <= 0 {
+		return -1
+	}
+	return math.Log10(x)
+}
+
 type PreciseTicks struct {
 	NSuggestedTicks int
 }
@@ -101,6 +115,26 @@ func round(x float64, prec int) float64 {
 	}
 
 	return x / pow
+}
+
+type LogTicks struct{}
+
+func (LogTicks) Ticks(min, max float64) []plot.Tick {
+	val := math.Pow10(int(log10(min)))
+	max = math.Pow10(int(math.Ceil(log10(max))))
+	var ticks []plot.Tick
+	for val < max {
+		for i := 1; i < 10; i++ {
+			if i == 1 {
+				ticks = append(ticks, plot.Tick{Value: val, Label: formatFloatTick(val, -1)})
+			}
+			ticks = append(ticks, plot.Tick{Value: val * float64(i)})
+		}
+		val *= 10
+	}
+	ticks = append(ticks, plot.Tick{Value: val, Label: formatFloatTick(val, -1)})
+
+	return ticks
 }
 
 func formatFloatTick(v float64, prec int) string {
