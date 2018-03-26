@@ -120,10 +120,10 @@ func main() {
 
 	colorMap := moreland.ExtendedBlackBody()
 	colorMap.SetMin(0)
-	colorMap.SetMax(0.025)
+	colorMap.SetMax(0.05)
 	heatMap := plotter.NewHeatMap(resGrid, colorMap.Palette(1000))
 	heatMap.Min = 0
-	heatMap.Max = 0.025
+	heatMap.Max = 0.05
 	p.Add(heatMap)
 
 	p.Save(6*vg.Inch, 4*vg.Inch, *output)
