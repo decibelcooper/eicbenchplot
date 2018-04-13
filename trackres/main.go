@@ -13,7 +13,8 @@ import (
 	"gonum.org/v1/plot"
 	"gonum.org/v1/plot/palette/moreland"
 	"gonum.org/v1/plot/plotter"
-	"gonum.org/v1/plot/vg"
+	"gonum.org/v1/plot/vg/draw"
+	"gonum.org/v1/plot/vg/vgimg"
 
 	"github.com/decibelcooper/eicplot"
 )
@@ -118,15 +119,21 @@ func main() {
 
 	reader.Close()
 
+	img := vgimg.New(670, 400)
+	dc := draw.New(img)
+    dc0 := draw.Crop(dc, 0, -70, 0, 0)
+    dc1 := draw.Crop(dc, 620, 0, 0, 0)
+
 	colorMap := moreland.ExtendedBlackBody()
 	colorMap.SetMin(0)
 	colorMap.SetMax(0.05)
-	heatMap := plotter.NewHeatMap(resGrid, colorMap.Palette(1000))
+	pal := colorMap.Palette(1000)
+	heatMap := plotter.NewHeatMap(resGrid, pal)
 	heatMap.Min = 0
 	heatMap.Max = 0.05
 	p.Add(heatMap)
 
-	p.Save(6*vg.Inch, 4*vg.Inch, *output)
+	p.Draw(dc0)
 
 	p, _ = plot.New()
 
@@ -136,7 +143,16 @@ func main() {
 	p.HideX()
 	p.Y.Padding = 0
 
-	p.Save(50, 400, "scale.png")
+	p.Draw(dc1)
+
+	w, err := os.Create(*output)
+	if err != nil {
+		log.Panic(err)
+	}
+	png := vgimg.PngCanvas{Canvas: img}
+	if _, err = png.WriteTo(w); err != nil {
+		log.Panic(err)
+	}
 }
 
 type ResGrid struct {
