@@ -23,6 +23,7 @@ var (
 	pTMin    = flag.Float64("minpt", 0.5, "minimum transverse momentum")
 	pTMax    = flag.Float64("maxpt", 30, "maximum transverse momentum")
 	etaLimit = flag.Float64("etalimit", 4, "maximum absolute value of eta")
+	resLimit = flag.Float64("reslimit", 0.1, "maximum momentum resolution in the color map")
 	nBinsPT  = flag.Int("nbinspt", 10, "number of bins in transverse momentum")
 	nBinsEta = flag.Int("nbinseta", 10, "number of bins in eta")
 	title    = flag.String("title", "", "plot title")
@@ -126,11 +127,11 @@ func main() {
 
 	colorMap := moreland.ExtendedBlackBody()
 	colorMap.SetMin(0)
-	colorMap.SetMax(0.1)
+	colorMap.SetMax(*resLimit)
 	pal := colorMap.Palette(1000)
 	heatMap := plotter.NewHeatMap(resGrid, pal)
 	heatMap.Min = 0
-	heatMap.Max = 0.1
+	heatMap.Max = *resLimit
 	p.Add(heatMap)
 
 	p.Draw(dc0)
