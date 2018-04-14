@@ -20,13 +20,14 @@ import (
 )
 
 var (
-	pTMin    = flag.Float64("minpt", 0.5, "minimum transverse momentum")
-	pTMax    = flag.Float64("maxpt", 30, "maximum transverse momentum")
-	etaLimit = flag.Float64("etalimit", 4, "maximum absolute value of eta")
-	nBinsPT  = flag.Int("nbinspt", 10, "number of bins in transverse momentum")
-	nBinsEta = flag.Int("nbinseta", 10, "number of bins in eta")
-	title    = flag.String("title", "", "plot title")
-	output   = flag.String("output", "out.png", "output file")
+	pTMin     = flag.Float64("minpt", 0.5, "minimum transverse momentum")
+	pTMax     = flag.Float64("maxpt", 30, "maximum transverse momentum")
+	etaLimit  = flag.Float64("etalimit", 4, "maximum absolute value of eta")
+	pullLimit = flag.Float64("pulllimit", 0.1, "maximum momentum pull in the color map")
+	nBinsPT   = flag.Int("nbinspt", 10, "number of bins in transverse momentum")
+	nBinsEta  = flag.Int("nbinseta", 10, "number of bins in eta")
+	title     = flag.String("title", "", "plot title")
+	output    = flag.String("output", "out.png", "output file")
 )
 
 func printUsage() {
@@ -125,11 +126,11 @@ func main() {
 	dc1 := draw.Crop(dc, 620, 0, 0, 0)
 
 	colorMap := moreland.SmoothBlueRed()
-	colorMap.SetMin(0.99)
-	colorMap.SetMax(1.01)
+	colorMap.SetMin(1.0 - *pullLimit)
+	colorMap.SetMax(1.0 + *pullLimit)
 	heatMap := plotter.NewHeatMap(resGrid, colorMap.Palette(1000))
-	heatMap.Min = 0.99
-	heatMap.Max = 1.01
+	heatMap.Min = 1.0 - *pullLimit
+	heatMap.Max = 1.0 + *pullLimit
 	p.Add(heatMap)
 
 	p.Draw(dc0)
