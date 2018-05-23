@@ -121,7 +121,7 @@ func makeTrackEffPlotters(filename string, pTMin, pTMax, fracCut, etaLimit float
 				for _, sourceID := range eDep.Source {
 					simHit, ok := event.GetEntry(sourceID).(*eic.SimHit)
 					if ok {
-						partCandID[simHit.Particle]++
+						partCandID[simHit.GetParticle()]++
 					}
 
 					_, ok = event.GetEntry(sourceID).(*eic.Particle)
@@ -149,14 +149,14 @@ func makeTrackEffPlotters(filename string, pTMin, pTMax, fracCut, etaLimit float
 				continue
 			}
 
-			pMag := math.Sqrt(math.Pow(part.P.X, 2) + math.Pow(part.P.Y, 2) + math.Pow(part.P.Z, 2))
-			eta := math.Atanh(part.P.Z / pMag)
-			pT := math.Sqrt(math.Pow(part.P.X, 2) + math.Pow(part.P.Y, 2))
-			chargeMag := math.Abs(float64(part.Charge))
+			pMag := math.Sqrt(math.Pow(part.GetP().GetX(), 2) + math.Pow(part.GetP().GetY(), 2) + math.Pow(part.GetP().GetZ(), 2))
+			eta := math.Atanh(part.GetP().GetZ() / pMag)
+			pT := math.Sqrt(math.Pow(part.GetP().GetX(), 2) + math.Pow(part.GetP().GetY(), 2))
+			chargeMag := math.Abs(float64(part.GetCharge()))
 			poqMag := pMag / chargeMag
-			diffMag := math.Sqrt(math.Pow(track.Segment[0].Poq.X-part.P.X/chargeMag, 2) +
-				math.Pow(track.Segment[0].Poq.Y-part.P.Y/chargeMag, 2) +
-				math.Pow(track.Segment[0].Poq.Z-part.P.Z/chargeMag, 2))
+			diffMag := math.Sqrt(math.Pow(track.Segment[0].GetPoq().GetX()-part.GetP().GetX()/chargeMag, 2) +
+				math.Pow(track.Segment[0].GetPoq().GetY()-part.GetP().GetY()/chargeMag, 2) +
+				math.Pow(track.Segment[0].GetPoq().GetZ()-part.GetP().GetZ()/chargeMag, 2))
 			fracDiff := diffMag / poqMag
 
 			// cuts
@@ -177,9 +177,9 @@ func makeTrackEffPlotters(filename string, pTMin, pTMax, fracCut, etaLimit float
 				continue
 			}
 
-			pMag := math.Sqrt(math.Pow(part.P.X, 2) + math.Pow(part.P.Y, 2) + math.Pow(part.P.Z, 2))
-			eta := math.Atanh(part.P.Z / pMag)
-			pT := math.Sqrt(math.Pow(part.P.X, 2) + math.Pow(part.P.Y, 2))
+			pMag := math.Sqrt(math.Pow(part.GetP().GetX(), 2) + math.Pow(part.GetP().GetY(), 2) + math.Pow(part.GetP().GetZ(), 2))
+			eta := math.Atanh(part.GetP().GetZ() / pMag)
+			pT := math.Sqrt(math.Pow(part.GetP().GetX(), 2) + math.Pow(part.GetP().GetY(), 2))
 
 			// cuts
 			if pT < pTMin || pT > pTMax {

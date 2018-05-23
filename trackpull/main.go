@@ -83,7 +83,7 @@ func main() {
 						continue
 					}
 
-					partCandID[simHit.Particle]++
+					partCandID[simHit.GetParticle()]++
 				}
 			}
 
@@ -105,14 +105,14 @@ func main() {
 				continue
 			}
 
-			pMag := math.Sqrt(math.Pow(part.P.X, 2) + math.Pow(part.P.Y, 2) + math.Pow(part.P.Z, 2))
-			eta := math.Atanh(part.P.Z / pMag)
-			pT := math.Sqrt(math.Pow(part.P.X, 2) + math.Pow(part.P.Y, 2))
-			chargeMag := math.Abs(float64(part.Charge))
+			pMag := math.Sqrt(math.Pow(part.GetP().GetX(), 2) + math.Pow(part.GetP().GetY(), 2) + math.Pow(part.GetP().GetZ(), 2))
+			eta := math.Atanh(part.GetP().GetZ() / pMag)
+			pT := math.Sqrt(math.Pow(part.GetP().GetX(), 2) + math.Pow(part.GetP().GetY(), 2))
+			chargeMag := math.Abs(float64(part.GetCharge()))
 			poqMag := pMag / chargeMag
-			trackPoqMag := math.Sqrt(math.Pow(track.Segment[0].Poq.X, 2) +
-				math.Pow(track.Segment[0].Poq.Y, 2) +
-				math.Pow(track.Segment[0].Poq.Z, 2))
+			trackPoqMag := math.Sqrt(math.Pow(track.Segment[0].GetPoq().GetX(), 2) +
+				math.Pow(track.Segment[0].GetPoq().GetY(), 2) +
+				math.Pow(track.Segment[0].GetPoq().GetZ(), 2))
 
 			resGrid.Fill(eta, pT, trackPoqMag/poqMag)
 		}

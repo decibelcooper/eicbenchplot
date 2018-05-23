@@ -59,7 +59,7 @@ func main() {
 				continue
 			}
 
-			hist.Fill(math.Log10(float64(eDep.Mean*1000)), 1)
+			hist.Fill(math.Log10(float64(eDep.GetMean()*1000)), 1)
 		}
 	}
 
