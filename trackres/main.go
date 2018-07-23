@@ -105,9 +105,9 @@ func main() {
 				continue
 			}
 
-			pMag := math.Sqrt(math.Pow(part.GetP().GetX(), 2) + math.Pow(part.GetP().GetY(), 2) + math.Pow(part.GetP().GetZ(), 2))
-			eta := math.Atanh(part.GetP().GetZ() / pMag)
-			pT := math.Sqrt(math.Pow(part.GetP().GetX(), 2) + math.Pow(part.GetP().GetY(), 2))
+			pMag := math.Sqrt(math.Pow(float64(part.GetP().GetX()), 2) + math.Pow(float64(part.GetP().GetY()), 2) + math.Pow(float64(part.GetP().GetZ()), 2))
+			eta := math.Atanh(float64(part.GetP().GetZ()) / pMag)
+			pT := math.Sqrt(math.Pow(float64(part.GetP().GetX()), 2) + math.Pow(float64(part.GetP().GetY()), 2))
 			chargeMag := math.Abs(float64(part.GetCharge()))
 			poqMag := pMag / chargeMag
 			trackPoqMag := math.Sqrt(math.Pow(track.Segment[0].GetPoq().GetX(), 2) +
