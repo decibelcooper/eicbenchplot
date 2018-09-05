@@ -7,8 +7,8 @@ import (
 	"math"
 	"os"
 
-	"github.com/decibelcooper/proio/go-proio"
-	"github.com/decibelcooper/proio/go-proio/model/eic"
+	"github.com/proio-org/go-proio"
+	"github.com/proio-org/go-proio-pb/model/eic"
 	"go-hep.org/x/hep/hbook"
 	"gonum.org/v1/plot"
 	"gonum.org/v1/plot/palette/moreland"

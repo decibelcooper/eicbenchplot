@@ -8,8 +8,8 @@ import (
 	"os"
 
 	"github.com/decibelcooper/eicplot"
-	"github.com/decibelcooper/proio/go-proio"
-	"github.com/decibelcooper/proio/go-proio/model/eic"
+	"github.com/proio-org/go-proio"
+	"github.com/proio-org/go-proio-pb/model/eic"
 	"go-hep.org/x/hep/hbook"
 	"go-hep.org/x/hep/hplot"
 	"gonum.org/v1/plot"
