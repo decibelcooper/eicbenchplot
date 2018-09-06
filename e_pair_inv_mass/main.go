@@ -59,8 +59,10 @@ func main() {
 		}
 
 		h := hplot.NewH1D(hist)
-		h.Infos.Style = hplot.HInfoSummary
 		h.LineStyle.Color = lineColor
+		if len(flag.Args()) == 1 {
+			h.Infos.Style = hplot.HInfoSummary
+		}
 
 		p.Add(h)
 	}
