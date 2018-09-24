@@ -8,7 +8,6 @@ import (
 	"math"
 	"os"
 
-	"github.com/pkg/profile"
 	"github.com/proio-org/go-proio"
 	"github.com/proio-org/go-proio-pb/model/eic"
 	"go-hep.org/x/hep/hbook"
@@ -29,8 +28,6 @@ options:
 }
 
 func main() {
-	defer profile.Start().Stop()
-
 	var (
 		title  = flag.String("title", "", "plot title")
 		output = flag.String("output", "out.png", "output file")
