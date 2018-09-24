@@ -44,7 +44,7 @@ func main() {
 
 	p, _ := plot.New()
 	p.Title.Text = *title
-	p.X.Label.Text = "Transverse Momentum Transfer (GeV)"
+	p.X.Label.Text = "-t (GeV^2)"
 	p.X.Tick.Marker = eicplot.PreciseTicks{NSuggestedTicks: 5}
 	p.Y.Tick.Marker = eicplot.LogTicks{}
 	p.Y.Scale = eicplot.LogScale{}
@@ -79,8 +79,9 @@ func main() {
 const jpsiMass = 3.096916
 
 func makeHists(filename string) []*hbook.H1D {
-	deltaPTHist := hbook.NewH1D(50, 0, 4)
-	deltaPTTruthHist := hbook.NewH1D(50, 0, 4)
+	tHist := hbook.NewH1D(50, -1, 4)
+	tPTruthHist := hbook.NewH1D(50, -1, 4)
+	tETruthHist := hbook.NewH1D(50, -1, 4)
 
 	reader, err := proio.Open(filename)
 	if err != nil {
@@ -98,30 +99,70 @@ func makeHists(filename string) []*hbook.H1D {
 		}
 
 		if len(tracks) == 3 {
-			var p [2]float64
+			var p [4]float64
+			p[2] += 5. // 5 GeV e- beam
+			p[3] -= 5.
 			for _, track := range tracks {
 				p[0] += *track.Segment[0].Poq.X
 				p[1] += *track.Segment[0].Poq.Y
+				p[2] += *track.Segment[0].Poq.Z
+				p[3] += math.Sqrt(pSquareD(track.Segment[0].Poq))
 			}
-			deltaPT := math.Sqrt(math.Pow(p[0], 2) + math.Pow(p[1], 2))
-			deltaPTHist.Fill(deltaPT, 1)
+			t := math.Pow(p[0], 2) + math.Pow(p[1], 2) + math.Pow(p[2], 2)
+			t -= math.Pow(p[3], 2)
+			tHist.Fill(t, 1)
 		}
 
 		ids = event.TaggedEntries("GenStable")
 		protons := []*eic.Particle{}
+		leptons := []*eic.Particle{}
 		for _, id := range ids {
 			part, ok := event.GetEntry(id).(*eic.Particle)
-			if ok && *part.Pdg == 2212 {
-				protons = append(protons, part)
+			if ok {
+				if *part.Pdg == 2212 {
+					protons = append(protons, part)
+				} else if *part.Pdg == 11 || *part.Pdg == -11 {
+					leptons = append(leptons, part)
+				}
 			}
 		}
 
 		if len(protons) == 1 {
-			deltaPT := math.Sqrt(math.Pow(float64(*protons[0].P.X), 2) + math.Pow(float64(*protons[0].P.Y), 2))
-			deltaPTTruthHist.Fill(deltaPT, 1)
+			t := math.Pow(float64(*protons[0].P.X), 2) + math.Pow(float64(*protons[0].P.Y), 2) + math.Pow(float64(*protons[0].P.Z-100.), 2) //  100 GeV p+ beam
+			t -= math.Pow(math.Sqrt(pSquareF(protons[0].P)+math.Pow(float64(*protons[0].Mass), 2))-100., 2)
+			tPTruthHist.Fill(t, 1)
+		}
+
+		if len(leptons) == 3 {
+			var p [4]float64
+			p[2] += 5. // 5 GeV e- beam
+			p[3] -= 5.
+			for _, lepton := range leptons {
+				p[0] += float64(*lepton.P.X)
+				p[1] += float64(*lepton.P.Y)
+				p[2] += float64(*lepton.P.Z)
+				p[3] += math.Sqrt(pSquareF(lepton.P))
+			}
+			t := math.Pow(p[0], 2) + math.Pow(p[1], 2) + math.Pow(p[2], 2)
+			t -= math.Pow(p[3], 2)
+			tETruthHist.Fill(t, 1)
 		}
 	}
 
 	reader.Close()
-	return []*hbook.H1D{deltaPTTruthHist, deltaPTHist}
+	return []*hbook.H1D{tPTruthHist, tETruthHist, tHist}
+}
+
+func pSquareD(p *eic.XYZD) float64 {
+	px2 := math.Pow(float64(*p.X), 2)
+	py2 := math.Pow(float64(*p.Y), 2)
+	pz2 := math.Pow(float64(*p.Z), 2)
+	return px2 + py2 + pz2
+}
+
+func pSquareF(p *eic.XYZF) float64 {
+	px2 := math.Pow(float64(*p.X), 2)
+	py2 := math.Pow(float64(*p.Y), 2)
+	pz2 := math.Pow(float64(*p.Z), 2)
+	return px2 + py2 + pz2
 }
